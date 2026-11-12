@@ -7,8 +7,8 @@ prompt, so the model reports on data it was given rather than inventing posts:
   2. StockTwits messages: the cashtag stream, with Bullish/Bearish tags
   3. Reddit posts: r/wallstreetbets, r/stocks, r/investing, or crypto communities for a crypto pair
 
-Each source is trimmed to the analysis window. With a TypeSafe key, the social
-posts are screened by Jev first (see post_screen). These feeds serve recent items
+Each source is trimmed to the analysis window. Luna screens fetched social posts
+before they enter the report (see post_screen). These feeds serve recent items
 and are not archived, so a historical run's sentiment inputs are not
 point-in-time.
 
@@ -23,7 +23,7 @@ from langchain_core.messages import AIMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 from tradingagents.agents.context import get_instrument_context_from_state, get_language_instruction
-from tradingagents.agents.post_screen import jev_screen
+from tradingagents.agents.post_screen import luna_screen
 from tradingagents.agents.schemas import SentimentReport, render_sentiment_report
 from tradingagents.agents.structured import (
     NO_EXTERNAL_TOOLS,
@@ -66,7 +66,7 @@ def create_sentiment_analyst(llm):
         news_block = get_news.func(ticker, start_date, end_date)
         # Pass the analysis window so a historical run trims social posts to it
         # instead of leaking today's chatter into a backtest (#1220).
-        screen = jev_screen(ticker)
+        screen = luna_screen(ticker, llm)
         stocktwits_block = fetch_stocktwits_messages(
             ticker, limit=30, start_date=start_date, end_date=end_date, screen=screen
         )

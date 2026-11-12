@@ -305,12 +305,12 @@ def test_an_unavailable_screen_keeps_every_post_and_says_so():
     posts = [{"title": "A1", "created_utc": None, "selftext": "", "subreddit": "a"}]
 
     def unavailable(texts):
-        return [True] * len(texts), "<Jev screening unavailable (HTTP 529); posts are unscreened>"
+        return [True] * len(texts), "<Luna screening unavailable (ScreeningError); posts are unscreened>"
 
     with patch.object(reddit, "_fetch_subreddit_rss", return_value=posts):
         screened = reddit.fetch_reddit_posts("NVDA", subreddits=("a", "b"), screen=unavailable)
         plain = reddit.fetch_reddit_posts("NVDA", subreddits=("a", "b"))
-    assert screened == "<Jev screening unavailable (HTTP 529); posts are unscreened>\n\n" + plain
+    assert screened == "<Luna screening unavailable (ScreeningError); posts are unscreened>\n\n" + plain
 
 
 @pytest.mark.unit
