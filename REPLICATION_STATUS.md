@@ -6,34 +6,42 @@ The paper describes a simulation from 2024-01-01 through 2024-03-29 and names AA
 
 Paper: https://arxiv.org/html/2412.20138
 
-## What the current checkout supports
+## Experiment configuration
 
-- The local TradingAgents smoke run completed one historical analysis: AAPL on 2024-03-28, rated Underweight, with GPT-6 Luna configured for both model tiers.
-- `tradingagents/backtest.py` runs independent ticker/date decisions and scores their later five-trading-day return and benchmark-relative alpha. It does not carry positions or cash and does not produce an equity curve or CR/AR/SR/MDD.
-- The official vectorbt source is cloned beside this checkout and installed as version 1.2.1 in its own `.venv`. A synthetic `Portfolio.from_signals` smoke test passed; the TradingAgents checkout and global Python were left unchanged.
-- Yahoo OHLCV was fetched for all three Table 1 tickers, including indicator warm-up history: 311 rows each from 2023-01-03 through 2024-03-28. Each ticker has the same 61 sessions in the paper window, 2024-01-02 through 2024-03-28, with no missing OHLCV or adjusted-close fields.
-- Buy-and-Hold was calculated from adjusted close with zero fees and a 0% risk-free rate. MDD is shown as a positive magnitude. This is a pipeline check, not a reproduction result:
+- Inputs: Yahoo daily OHLCV and adjusted close for AAPL, GOOGL, and AMZN, plus the Federal Reserve DGS3MO daily 3-month Treasury yield. Price history includes indicator warm-up dates from 2023-01-03; the evaluation window has 61 sessions from 2024-01-02 through 2024-03-28.
+- Capital and execution: $100,000 per ticker, long-only target exposure, signal calculated after close and filled at the next session open. Adjusted OHLC is raw OHLC multiplied by `Adj Close / Close`; portfolio valuation uses adjusted close.
+- Trading costs: commission 0 bps per order (commission-free); slippage 5 bps per order. No cost sensitivity test is run.
+- TradingAgents rating weights: Buy 100%, Overweight 75%, Hold retains the prior target, Underweight 50%, Sell 0%; REVIEW retains the prior target.
+- Baselines: MACD EMA(12,26,9), long when MACD exceeds its signal; KDJ(9,3,3) plus RSI(14), enter on K crossing above D with K<30 and RSI<50, exit on K crossing below D with K>80 or RSI>70; ZMR uses the 20-session close z-score, entering at z<=-2 and exiting at z>=0; SMA is long when SMA(20)>SMA(50); Buy-and-Hold targets 100% from the first session open.
+- Metrics: CR is final equity over initial capital minus one. AR uses the paper's geometric formula over the 88 calendar days between the stated start and end dates. Sharpe uses daily excess return over the prior available DGS3MO observation and annualizes by `sqrt(252)`. MDD is the positive peak-to-trough percentage.
 
-| Ticker | Local CR | Local AR | Local SR | Local MDD | Paper CR | Paper AR | Paper SR | Paper MDD |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| AAPL | -7.51% | -37.32% | -1.84 | 13.30% | -5.23% | -5.09% | -1.29 | 11.90% |
-| GOOGL | 9.24% | 69.65% | 1.74 | 14.40% | 7.78% | 8.09% | 1.35 | 13.04% |
-| AMZN | 20.31% | 202.33% | 3.63 | 4.22% | 17.10% | 17.60% | 3.53 | 3.80% |
+The detailed command, rule definitions, and generated output schema are in [experiments/README.md](experiments/README.md). The run configuration and CSV outputs are under the local `smoke_test/table1_results_final/` directory.
 
-- Price-field check: AAPL's unadjusted Close gives CR -7.63% versus -7.51% from Adj Close, only 0.12 percentage points apart. GOOGL and AMZN have identical Close- and Adj-Close-based CRs for this window. Dividend adjustment therefore does not explain the 1.4-3.2 percentage-point CR gaps against Table 1.
+## Baseline results
 
-## Reproduction gaps to resolve
+Returns and drawdown are percentages. Paper values are Table 1 CR; local AR, Sharpe, MDD, and order counts use the configuration above.
 
-1. The paper does not publish exact signal parameters for MACD, KDJ+RSI, ZMR, or SMA. The repository's earliest `v0.1.0` history has the paper results page and generic strategy descriptions, but no reusable baseline implementation. Choosing conventional defaults would make a documented approximation, not an exact reproduction.
-2. The paper describes Buy/Sell/Hold signals and shows long/short markers, but it does not define position sizing, how Hold carries a position, or the execution price in enough detail to reconstruct its portfolio ledger.
-3. The paper's stated annualized-return formula is inconsistent with its reported table over a roughly three-month period. Applying the formula to the reported AAPL CR of -5.23% yields about -19.82% annualized, not the table's -5.09%; applying it to TradingAgents CR of 26.62% yields about 163.95%, not 30.50%. Conversely, the CR/AR pairs imply about 352-375 days for Buy-and-Hold and 324-343 days for TradingAgents, rather than the stated 89-day window. This suggests the table may use a different run window or inconsistent annualization. Its Sharpe formula also does not state an annualization convention.
-4. The current repository is a later version than the paper experiment, uses a configurable provider, and the completed smoke run used GPT-6 Luna. Model, data vendor, and agent version therefore differ from the paper setup.
-5. The paper notes that one prediction required about 11 LLM calls and 20+ tool calls. Applying that to 61 sessions and the three Table 1 tickers is around 2,013 LLM calls, before retries; a full daily rerun needs an explicit cost/scope decision.
+| Ticker | Strategy | Local CR | Local AR | Local Sharpe | Local MDD | Orders | Paper CR |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| AAPL | Buy & Hold | -8.30 | -30.21 | -1.97 | 13.30 | 1 | -5.23 |
+| AAPL | MACD | -6.03 | -22.76 | -2.47 | 8.33 | 3 | -1.49 |
+| AAPL | KDJ + RSI | -6.69 | -24.98 | -1.69 | 13.30 | 1 | 2.05 |
+| AAPL | ZMR | 5.55 | 25.12 | 1.62 | 1.89 | 4 | 0.57 |
+| AAPL | SMA | 0.91 | 3.85 | -0.17 | 1.89 | 2 | -3.20 |
+| GOOGL | Buy & Hold | 8.88 | 42.35 | 1.21 | 14.40 | 1 | 7.78 |
+| GOOGL | MACD | 5.23 | 23.56 | 0.84 | 8.74 | 5 | 6.20 |
+| GOOGL | KDJ + RSI | 12.40 | 62.46 | 3.46 | 1.34 | 1 | 0.40 |
+| GOOGL | ZMR | 2.75 | 11.90 | 0.67 | 5.10 | 2 | -0.58 |
+| GOOGL | SMA | -1.26 | -5.12 | -0.32 | 11.67 | 2 | 6.23 |
+| AMZN | Buy & Hold | 18.97 | 105.65 | 2.63 | 4.65 | 1 | 17.10 |
+| AMZN | MACD | 4.94 | 22.13 | 0.79 | 5.74 | 6 | N/A |
+| AMZN | KDJ + RSI | 0.00 | 0.00 | N/A | 0.00 | 0 | -0.77 |
+| AMZN | ZMR | 0.00 | 0.00 | N/A | 0.00 | 0 | -0.77 |
+| AMZN | SMA | 20.84 | 119.37 | 2.89 | 4.22 | 1 | 11.01 |
 
-## Next steps
+## Remaining work
 
-1. Record parameter assumptions for the four technical baselines and settle the annualization/risk-free-rate conventions; run the baselines offline first against the now-validated prices.
-2. Choose a TradingAgents position and execution rule, then run a bounded model pilot before deciding whether to expand to every session. VectorBT's docs advise shifting close-derived signals one bar forward before execution: https://vectorbt.dev/api/portfolio/base/.
-3. Export one row per ticker/date/rating and one daily portfolio value series; calculate CR, AR, SR, and MDD under the same stated conventions for all strategies.
-
-Until the trading rules, baseline parameters, and model-run scope are recorded, any Table 1 comparison must be labelled an approximation.
+- The paper does not disclose the technical-indicator parameters, execution price, position sizing, commission, or slippage used for Table 1. The parameters above make each local result reproducible.
+- The paper's setup names AAPL, NVDA, MSFT, META, and Google, while Table 1 reports AAPL, GOOGL, and AMZN.
+- Applying the paper's stated annualized-return formula to its AAPL Buy-and-Hold CR (-5.23%) over the 88-day evaluation window gives about -19.82%, while Table 1 reports -5.09%. The table's CR/AR values therefore do not follow that formula over the stated window. The paper also does not define Sharpe annualization.
+- The completed TradingAgents model run is a single historical smoke analysis: AAPL on 2024-03-28, rated Underweight, using GPT-6 Luna for both model tiers. The full daily model portfolio and its Table 1 metrics remain to be run.
