@@ -18,3 +18,20 @@ CR uses final equity relative to initial cash. AR applies the paper's geometric 
 
 - Paper: https://arxiv.org/html/2412.20138
 - DGS3MO: https://fred.stlouisfed.org/series/DGS3MO
+
+## TradingAgents Table 1 Run
+
+Run the model grid from the repository root in the configured Conda environment. The pilot covers all three tickers on the final paper-window session; running the full command with the same run ID resumes those cells and analyzes the rest of the 61 sessions.
+
+```powershell
+python -m experiments.run_tradingagents_table1 --pilot --run-id table1_2024
+python -m experiments.run_tradingagents_table1 --run-id table1_2024
+```
+
+The model runner writes resumable decision records and full per-cell state logs under `smoke_test/table1_agent_full/`. If the full grid completes, score it with the vectorbt environment:
+
+```powershell
+..\vectorbt\.venv\Scripts\python.exe -m experiments.score_tradingagents_table1
+```
+
+Scoring produces the combined Table 1 metrics, daily equity curves, rating-to-weight records, executed orders, improvement row, and one offline HTML comparison chart per ticker. The daily decision mapping is Buy 100%, Overweight 75%, Hold retain, Underweight 50%, Sell 0%, and REVIEW retain. A missing model decision is reported and prevents final scoring.
