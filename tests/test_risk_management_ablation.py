@@ -8,6 +8,10 @@ def _node(_state):
     return {}
 
 
+def _portfolio_manager(_llm, risk_management_enabled=True):
+    return _node
+
+
 def _workflow(risk_management_enabled):
     patches = {
         "create_sentiment_analyst": _node,
@@ -18,7 +22,7 @@ def _workflow(risk_management_enabled):
         "create_aggressive_debator": _node,
         "create_neutral_debator": _node,
         "create_conservative_debator": _node,
-        "create_portfolio_manager": _node,
+        "create_portfolio_manager": _portfolio_manager,
     }
     with patch.multiple("tradingagents.graph.setup", **patches):
         setup = GraphSetup(object(), object(), ConditionalLogic(), max_tool_rounds=1)
