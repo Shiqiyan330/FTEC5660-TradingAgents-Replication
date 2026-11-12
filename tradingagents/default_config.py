@@ -132,6 +132,7 @@ def build_default_config() -> dict:
         # Debate and discussion settings
         "max_debate_rounds": 1,
         "max_risk_discuss_rounds": 1,
+        "risk_management_enabled": True,
         "max_recur_limit": 100,
         # Rounds of tool calls an analyst may make before it is asked for its report.
         "max_tool_rounds": 20,

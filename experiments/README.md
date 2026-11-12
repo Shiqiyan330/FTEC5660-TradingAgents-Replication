@@ -25,8 +25,10 @@ Run the model grid from the repository root in the configured Conda environment.
 
 ```powershell
 python -m experiments.run_tradingagents_table1 --pilot --run-id table1_2024
-python -m experiments.run_tradingagents_table1 --run-id table1_2024
+python -m experiments.run_tradingagents_table1 --run-id table1_2024 --parallel-tickers
 ```
+
+The parallel runner overlaps AAPL, GOOGL, and AMZN for each date, then waits for all three before moving to the next date. Its shared memory log preserves cross-ticker context, and completed ticker-date cells are skipped when resuming the same run ID. After the full grid, it audits news availability and retries each reported-unavailable Yahoo company/global-news window once. The audit and retry responses are saved to `news_coverage_audit.csv`, `news_retry_results.csv`, and `news_retries/`; supplemental retries do not overwrite first-pass model decisions.
 
 The model runner writes resumable decision records and full per-cell state logs under `smoke_test/table1_agent_full/`. If the full grid completes, score it with the vectorbt environment:
 
@@ -35,3 +37,16 @@ The model runner writes resumable decision records and full per-cell state logs 
 ```
 
 Scoring produces the combined Table 1 metrics, daily equity curves, rating-to-weight records, executed orders, improvement row, and one offline HTML comparison chart per ticker. The daily decision mapping is Buy 100%, Overweight 75%, Hold retain, Underweight 50%, Sell 0%, and REVIEW retain. A missing model decision is reported and prevents final scoring.
+
+## Risk-Team Ablation
+
+The modification keeps the configured LLMs fixed and removes the three-agent risk debate (aggressive, conservative, and neutral). In the ablated graph, the Trader's proposal goes directly to the Portfolio Manager, whose prompt explicitly says no risk debate occurred. The analyst team, research debate, memory, tools, dates, market data, execution, and scoring stay the same. Use distinct run IDs and output directories so checkpoints and decisions cannot mix:
+
+```powershell
+python -m experiments.run_tradingagents_table1 --run-id table1_full --output-dir smoke_test/table1_full --parallel-tickers
+python -m experiments.run_tradingagents_table1 --run-id table1_no_risk --output-dir smoke_test/table1_no_risk --parallel-tickers --ablate-risk-management
+```
+
+The TradingAgents paper describes the risk team as monitoring exposure and mitigating risk, and attributes its reported drawdown behavior to risk-control debates. It does not report a component-level ablation, so this experiment tests that design claim rather than reproducing a published ablation. A related financial multi-agent study reports lower cumulative return, mean return, and Sharpe after removing agents or collaboration mechanisms; that supports ablation as a useful method but does not establish the expected effect size for TradingAgents. Sources: [TradingAgents](https://arxiv.org/abs/2412.20138), [Adaptive LLM-based Multi-Agent Systems to Enhance Quantitative Trading Performance](https://peerj.com/articles/cs-3630/).
+
+Compare the full and ablated runs with the same scoring script and report CR, AR, Sharpe, and MDD per ticker alongside decision-rating changes. Results are model- and date-window-specific; they estimate the risk team's marginal contribution under this configuration.

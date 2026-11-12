@@ -109,7 +109,11 @@ class TradingAgentsGraph:
         self.selected_analysts = tuple(selected_analysts)
 
         # Set up the graph: keep the workflow for recompilation with a checkpointer.
-        self.workflow = self.graph_setup.setup_graph(selected_analysts, memory_node=self._memory_step)
+        self.workflow = self.graph_setup.setup_graph(
+            selected_analysts,
+            memory_node=self._memory_step,
+            risk_management_enabled=self.config.get("risk_management_enabled", True),
+        )
         self.graph = self.workflow.compile()
         self._checkpointer_ctx = None
         self._resuming = False
@@ -269,6 +273,7 @@ class TradingAgentsGraph:
             "analysts": list(self.selected_analysts),
             "max_debate_rounds": cfg.get("max_debate_rounds"),
             "max_risk_discuss_rounds": cfg.get("max_risk_discuss_rounds"),
+            "risk_management_enabled": cfg.get("risk_management_enabled", True),
             "output_language": cfg.get("output_language"),
             "data_vendors": dict(cfg.get("data_vendors") or {}),
             "tool_vendors": dict(cfg.get("tool_vendors") or {}),

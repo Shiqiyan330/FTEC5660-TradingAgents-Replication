@@ -41,6 +41,8 @@ Returns and drawdown are percentages. Paper values are Table 1 CR; local AR, Sha
 
 ## Remaining work
 
+- Planned fixed-model ablation: disable the three-agent Risk Management Team while retaining the analyst team, researcher debate, Trader, memory, data, dates, and scoring. The ablated path sends the Trader proposal directly to the Portfolio Manager, with a prompt that explicitly states no risk debate occurred. The original paper argues that risk-management debate supports drawdown control but reports no component-level ablation; this experiment measures that claim in the reproduction setup. The runner exposes `--ablate-risk-management`; run the full and ablated conditions in separate output directories and with identical model/provider settings before reporting an effect.
+- Ablation results are pending. A full run makes many hosted-model calls and must not be represented by the existing single-day smoke test or the baseline-only results below.
 - The paper does not disclose the technical-indicator parameters, execution price, position sizing, commission, or slippage used for Table 1. The parameters above make each local result reproducible.
 - The paper's setup names AAPL, NVDA, MSFT, META, and Google, while Table 1 reports AAPL, GOOGL, and AMZN.
 - Applying the paper's stated annualized-return formula to its AAPL Buy-and-Hold CR (-5.23%) over the 88-day evaluation window gives about -19.82%, while Table 1 reports -5.09%. The table's CR/AR values therefore do not follow that formula over the stated window. The paper also does not define Sharpe annualization.

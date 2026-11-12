@@ -20,7 +20,7 @@ from tradingagents.agents.schemas import PortfolioDecision, render_pm_decision
 from tradingagents.agents.structured import NO_EXTERNAL_TOOLS, bind_structured, invoke_structured
 
 
-def create_portfolio_manager(llm):
+def create_portfolio_manager(llm, risk_management_enabled: bool = True):
     structured_llm = bind_structured(llm, PortfolioDecision, "Portfolio Manager")
 
     def portfolio_manager_node(state) -> dict:
@@ -39,7 +39,18 @@ def create_portfolio_manager(llm):
             else ""
         )
 
-        prompt = f"""As the Portfolio Manager, synthesize the risk analysts' debate and deliver the final trading decision.
+        risk_section = (
+            f"**Risk Analysts Debate History:**\n{history}"
+            if risk_management_enabled
+            else "**Risk review ablation:** No risk-management debate was conducted. Assess the Trader's proposal directly against the research plan and evidence."
+        )
+        risk_instruction = (
+            "The risk debate always contains conflicting stances; deciding which is stronger is the job, so conflict alone is not a reason to Hold. Commit to the stronger case, sized by how decisively it wins. Choose Hold only when the evidence is still balanced after that weighing, or too thin to support a call; do not force a direction to appear decisive. Weigh the analysts on their merits, independent of speaking order."
+            if risk_management_enabled
+            else "Assess the Trader's proposal using the research plan, portfolio context, and available evidence. Choose Hold when the evidence is balanced or too thin to support a call; do not assume that a risk debate occurred."
+        )
+
+        prompt = f"""As the Portfolio Manager, synthesize the trading proposal and deliver the final trading decision.
 
 {instrument_context}
 
@@ -58,12 +69,11 @@ def create_portfolio_manager(llm):
 - Research Manager's investment plan: **{research_plan}**
 - Trader's transaction proposal: **{trader_plan}**
 {lessons_line}
-**Risk Analysts Debate History:**
-{history}
+{risk_section}
 
 ---
 
-Ground every conclusion in specific evidence from the analysts. The risk debate always contains conflicting stances; deciding which is stronger is the job, so conflict alone is not a reason to Hold. Commit to the stronger case, sized by how decisively it wins. Choose Hold only when the evidence is still balanced after that weighing, or too thin to support a call; do not force a direction to appear decisive. Weigh the analysts on their merits, independent of speaking order.
+Ground every conclusion in specific evidence from the analysts. {risk_instruction}
 
 ## Output
 
