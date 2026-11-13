@@ -1,0 +1,1 @@
+"""Benzinga news data vendor."""

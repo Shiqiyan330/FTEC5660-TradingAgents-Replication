@@ -1,0 +1,28 @@
+{
+  "vendor": "benzinga",
+  "api_url": "https://api.benzinga.com/api/v2/news",
+  "start_date": "2024-03-21",
+  "end_date": "2024-03-28",
+  "cutoff_utc_exclusive": "2024-03-29T00:00:00Z",
+  "retrieved_at_utc": "2026-11-13T06:36:30.445802+00:00",
+  "selection": "latest 20 company / 10 global articles after UTC publication and update filtering; daily fetch cap 20 / 10, no pagination; not exhaustive",
+  "excerpt_words_max": 20,
+  "files": {
+    "AAPL.json": {
+      "article_count": 20,
+      "sha256": "46382e91710f61a69967f012a14453c9049885702c0f196ab9852b8933291732"
+    },
+    "GOOGL.json": {
+      "article_count": 20,
+      "sha256": "f44a9c5e98a2721f71a5bbbad58ab0b5b6549c177b64e190419743ef1a6cb2a9"
+    },
+    "AMZN.json": {
+      "article_count": 18,
+      "sha256": "87d10f024a5b191181cd0507200ac9f1274f196624bc41a7b2e6af209041ba98"
+    },
+    "GLOBAL.json": {
+      "article_count": 10,
+      "sha256": "b59bc18486e6c2d823970197a70a4c625c64dd3531c4e99afafde0a75dc907de"
+    }
+  }
+}

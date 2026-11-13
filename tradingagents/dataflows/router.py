@@ -6,6 +6,10 @@ from tradingagents.dataflows.errors import (
     VendorNotConfiguredError,
     VendorUnavailableError,
 )
+from tradingagents.dataflows.vendors.benzinga.news import (
+    get_global_news as get_benzinga_global_news,
+    get_news as get_benzinga_news,
+)
 from tradingagents.dataflows.vendors.alpha_vantage import (
     get_balance_sheet as get_alpha_vantage_balance_sheet,
     get_cashflow as get_alpha_vantage_cashflow,
@@ -127,10 +131,12 @@ VENDOR_METHODS = {
     },
     # news_data
     "get_news": {
+        "benzinga": get_benzinga_news,
         "alpha_vantage": get_alpha_vantage_news,
         "yfinance": get_news_yfinance,
     },
     "get_global_news": {
+        "benzinga": get_benzinga_global_news,
         "yfinance": get_global_news_yfinance,
         "alpha_vantage": get_alpha_vantage_global_news,
     },

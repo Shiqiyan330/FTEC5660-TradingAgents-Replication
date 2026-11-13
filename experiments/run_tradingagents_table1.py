@@ -25,6 +25,7 @@ def _run_parallel_backtest(
     run_id: str | None = None,
     progress=None,
     graph_factory=None,
+    ticker_workers: int | None = None,
 ):
     """Run same-date ticker decisions concurrently, with a barrier before the next date."""
     from tradingagents.backtest import BacktestResult
@@ -66,7 +67,7 @@ def _run_parallel_backtest(
 
     # A date barrier keeps cross-ticker memory point-in-time consistent while
     # overlapping each ticker's independent LLM and data-provider waits.
-    with ThreadPoolExecutor(max_workers=len(tickers)) as executor:
+    with ThreadPoolExecutor(max_workers=ticker_workers or len(tickers)) as executor:
         submitted = 0
         for date in dates:
             batch = [(ticker, date) for ticker in tickers if (ticker, date) in todo_set]
@@ -137,13 +138,10 @@ def _audit_and_retry_news(
     dates: list[str],
     config: dict,
 ) -> dict:
-    """Audit saved news reports, then retry only Yahoo sources reported unavailable."""
+    """Audit saved news reports, then retry configured sources reported unavailable."""
     from tradingagents.agents.analysts.sentiment_analyst import _seven_days_back
     from tradingagents.dataflows.config import run_config
-    from tradingagents.dataflows.vendors.yahoo.news import (
-        get_global_news_yfinance,
-        get_news_yfinance,
-    )
+    from tradingagents.dataflows.router import route_to_vendor
 
     run_dir = run_store / "results" / "backtest" / run_id
     audit_rows, targets = [], set()
@@ -191,9 +189,9 @@ def _audit_and_retry_news(
         with run_config(config):
             try:
                 if source == "company":
-                    text = get_news_yfinance(ticker, _seven_days_back(date), date)
+                    text = route_to_vendor("get_news", ticker, _seven_days_back(date), date)
                 else:
-                    text = get_global_news_yfinance(date)
+                    text = route_to_vendor("get_global_news", date)
                 status = _retry_status(str(text))
                 return {
                     "source": source,
@@ -264,6 +262,10 @@ def run(
     pilot: bool,
     parallel_tickers: bool = False,
     risk_management_enabled: bool = True,
+    news_vendor: str = "yfinance",
+    news_snapshot_dir: Path | None = None,
+    ticker_workers: int | None = None,
+    graph_max_concurrency: int | None = None,
 ) -> dict:
     output_dir.mkdir(parents=True, exist_ok=True)
     run_store = output_dir / "run_files"
@@ -286,6 +288,16 @@ def run(
     config["data_cache_dir"] = str(run_store / "cache")
     config["memory_log_path"] = str(run_store / "memory" / "unused.md")
     config["risk_management_enabled"] = risk_management_enabled
+    if graph_max_concurrency is not None:
+        config['graph_max_concurrency'] = graph_max_concurrency
+    if news_snapshot_dir is not None:
+        config['benzinga_snapshot_dir'] = str(news_snapshot_dir.resolve())
+        config['news_snapshot_access_log'] = str((output_dir / 'news_snapshot_access.jsonl').resolve())
+    config["tool_vendors"] = {
+        **config.get("tool_vendors", {}),
+        "get_news": news_vendor,
+        "get_global_news": news_vendor,
+    }
 
     logging.getLogger("tradingagents.backtest").setLevel(logging.ERROR)
 
@@ -296,6 +308,7 @@ def run(
         result = _run_parallel_backtest(
             list(TICKERS), selected_dates, config,
             selected_analysts=ANALYSTS, run_id=run_id, progress=progress,
+            ticker_workers=ticker_workers,
         )
     else:
         result = run_backtest(
@@ -327,6 +340,9 @@ def run(
     status = {
         "run_id": run_id,
         "phase": "pilot" if pilot else "full",
+        "news_provider": news_vendor,
+        "news_snapshot_dir": str(news_snapshot_dir) if news_snapshot_dir else None,
+        'graph_max_concurrency': config.get('graph_max_concurrency'),
         "expected_cells": len(expected),
         "stored_cells_in_phase": len(expected & stored),
         "cells_run": result.cells_run,
@@ -358,6 +374,10 @@ def main() -> None:
     parser.add_argument("--run-id", default="table1_2024")
     parser.add_argument("--pilot", action="store_true", help="Run the final paper-window session only")
     parser.add_argument("--parallel-tickers", action="store_true", help="Run each ticker concurrently, preserving date order")
+    parser.add_argument("--ticker-workers", type=int, choices=(1, 2, 3), help="Cap ticker concurrency within each date")
+    parser.add_argument("--news-vendor", choices=("yfinance", "benzinga", "alpha_vantage"), default="yfinance")
+    parser.add_argument("--news-snapshot-dir", type=Path)
+    parser.add_argument('--graph-max-concurrency', type=int, choices=(1, 2, 3, 4))
     parser.add_argument(
         "--ablate-risk-management", action="store_true",
         help="Ablate the risk debate team and pass the Trader proposal to the Portfolio Manager",
@@ -366,7 +386,8 @@ def main() -> None:
     output_dir = args.output_dir if args.output_dir.is_absolute() else root / args.output_dir
     status = run(
         args.data_dir, output_dir, args.run_id, args.pilot,
-        args.parallel_tickers, not args.ablate_risk_management,
+        args.parallel_tickers, not args.ablate_risk_management, args.news_vendor, args.news_snapshot_dir,
+        args.ticker_workers, args.graph_max_concurrency,
     )
     if status["missing_cells"]:
         raise SystemExit(2)

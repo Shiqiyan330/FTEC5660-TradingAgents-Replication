@@ -1,0 +1,29 @@
+{
+  "paper_window": [
+    "2024-01-01",
+    "2024-03-29"
+  ],
+  "price_basis": "Yahoo adjusted OHLC: raw OHLC multiplied by Adj Close / Close",
+  "execution": "signals from date t close; target exposure filled at date t+1 open",
+  "initial_cash_per_ticker": 100000.0,
+  "rating_target_weights": {
+    "Buy": 1.0,
+    "Overweight": 0.75,
+    "Hold": "retain prior target",
+    "Underweight": 0.5,
+    "Sell": 0.0,
+    "REVIEW": "retain prior target"
+  },
+  "commission_bps_per_order": 0.0,
+  "slippage_bps_per_order": 5.0,
+  "risk_free_rate": "prior available DGS3MO observation converted from annual yield to daily rate",
+  "sharpe_annualization": 252,
+  "annual_return_year_fraction": 0.24093086926762491,
+  "signal_parameters": {
+    "MACD": "EMA(12)-EMA(26), signal EMA(9); long when MACD > signal",
+    "KDJ + RSI": "KDJ(9,3,3), RSI(14); enter on K cross above D with K<30 and RSI<50; exit on K cross below D with K>80 or RSI>70",
+    "ZMR": "20-session close z-score; enter at z<=-2; exit at z>=0",
+    "SMA": "SMA(20)/SMA(50); long when SMA(20)>SMA(50)",
+    "Buy & Hold": "100% target exposure from first session open"
+  }
+}

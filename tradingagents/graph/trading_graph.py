@@ -102,6 +102,7 @@ class TradingAgentsGraph:
 
         self.propagator = Propagator(
             max_recur_limit=max_recur_limit,
+            max_concurrency=self.config.get('graph_max_concurrency'),
         )
         self.reflector = Reflector(self.quick_thinking_llm)
 

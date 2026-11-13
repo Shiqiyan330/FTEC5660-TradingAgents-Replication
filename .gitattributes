@@ -1,1 +1,2 @@
 *.pdf binary
+experiments/data/news_20240328/*.json text eol=lf
