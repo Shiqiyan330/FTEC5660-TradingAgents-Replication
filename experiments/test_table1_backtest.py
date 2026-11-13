@@ -2,6 +2,7 @@
 
 import unittest
 
+import numpy as np
 import pandas as pd
 
 from experiments.table1_backtest import (
@@ -49,10 +50,27 @@ class Table1BacktestTests(unittest.TestCase):
         dates = pd.date_range("2024-01-02", periods=3, freq="B")
         prices = pd.Series([100.0, 100.0, 100.0], index=dates)
         flat = pd.Series(0.0, index=dates)
+        risk_free = pd.Series([0.001, 0.002, 0.003], index=dates)
 
         portfolio = simulate(prices, prices, flat)
 
-        self.assertEqual(score_portfolio(portfolio, flat)["mdd_pct"], 0.0)
+        score = score_portfolio(portfolio, risk_free)
+        self.assertEqual(score["mdd_pct"], 0.0)
+        self.assertTrue(np.isnan(score["sharpe"]))
+
+    def test_sharpe_uses_portfolio_return_volatility(self):
+        dates = pd.date_range("2024-01-02", periods=5, freq="B")
+        close = pd.Series([100.0, 102.0, 101.0, 104.0, 103.0], index=dates)
+        open_ = close.copy()
+        target = pd.Series(1.0, index=dates)
+        risk_free = pd.Series([0.001, 0.002, 0.003, 0.002, 0.001], index=dates)
+        portfolio = simulate(close, open_, target, slippage_bps=0.0)
+        nav = portfolio.value()
+        returns = nav / nav.shift(1, fill_value=INITIAL_CASH) - 1
+        excess = returns - risk_free
+        expected = np.sqrt(252) * excess.mean() / returns.std(ddof=1)
+
+        self.assertAlmostEqual(score_portfolio(portfolio, risk_free)["sharpe"], expected)
 
 
 if __name__ == "__main__":

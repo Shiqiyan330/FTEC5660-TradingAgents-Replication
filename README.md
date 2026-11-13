@@ -4,6 +4,12 @@
 
 # TradingAgents: Multi-Agents LLM Financial Trading Framework
 
+## FTEC5660 reproduction and ablation
+
+This branch contains a coursework reproduction of Table 1 technical baselines and a fixed-model risk-team ablation. Start with [the report](reports/reproducibility_report.pdf), [experiment instructions](experiments/README.md), [result artifacts](experiments/results/risk_replay), and [submission items requiring the student](reports/HUMAN_IN_LOOP.md). Both model tiers use `gpt-6-luna`; frozen analyst/research/Trader inputs isolate the downstream risk-team comparison. The report distinguishes the measured subset from the paper's full-period performance claim.
+
+Use the installation steps below, then the commands in `experiments/README.md`. The baseline scorer additionally needs `vectorbt`; the saved input snapshots and completed replay results can be inspected without API access. API calls require your own locally configured key. The presentation recording link is supplied separately at submission.
+
 <div align="center" style="line-height: 1;">
   <a href="https://arxiv.org/abs/2412.20138" target="_blank"><img alt="arXiv" src="https://img.shields.io/badge/arXiv-2412.20138-B31B1B?logo=arxiv"/></a>
   <a href="https://discord.com/invite/hk9PGKShPK" target="_blank"><img alt="Discord" src="https://img.shields.io/badge/Discord-TradingResearch-7289da?logo=discord&logoColor=white&color=7289da"/></a>

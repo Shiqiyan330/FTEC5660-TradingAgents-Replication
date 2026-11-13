@@ -1,0 +1,225 @@
+{
+  "trials": 3,
+  "tickers": [
+    "AAPL",
+    "GOOGL",
+    "AMZN"
+  ],
+  "cells": 18,
+  "input_date": "2024-03-28",
+  "settings": {
+    "quick_think_llm": "gpt-6-luna",
+    "deep_think_llm": "gpt-6-luna",
+    "quick_think_provider": "openai",
+    "deep_think_provider": "openai",
+    "llm_kwargs": {},
+    "max_risk_discuss_rounds": 1,
+    "output_language": "English"
+  },
+  "initial_weight_pct": 0,
+  "trial_means": [
+    {
+      "trial": 1,
+      "full": 16.666666666666668,
+      "no_risk": 50,
+      "delta_pp": 33.33333333333333,
+      "changed_ratings": 2
+    },
+    {
+      "trial": 2,
+      "full": 16.666666666666668,
+      "no_risk": 50,
+      "delta_pp": 33.33333333333333,
+      "changed_ratings": 2
+    },
+    {
+      "trial": 3,
+      "full": 33.333333333333336,
+      "no_risk": 50,
+      "delta_pp": 16.666666666666664,
+      "changed_ratings": 1
+    }
+  ],
+  "statistics": {
+    "full": {
+      "mean": 22.222222222222225,
+      "sample_variance_pp2": 92.59259259259261,
+      "sample_sd_pp": 9.622504486493764
+    },
+    "no_risk": {
+      "mean": 50,
+      "sample_variance_pp2": 0,
+      "sample_sd_pp": 0.0
+    },
+    "delta_pp": {
+      "mean": 27.777777777777775,
+      "sample_variance_pp2": 92.59259259259257,
+      "sample_sd_pp": 9.622504486493762
+    }
+  },
+  "interpretation": "variability across trial means; not 9 independent market dates",
+  "rating_rows": [
+    {
+      "trial": 1,
+      "ticker": "AAPL",
+      "condition": "full",
+      "rating": "Sell",
+      "target_weight_pct": 0,
+      "risk_turns": 3,
+      "input_sha256": "28228b1df111eac08377126f862053f6c8d83afa3bd28b960c198f1def1fe11a"
+    },
+    {
+      "trial": 1,
+      "ticker": "AAPL",
+      "condition": "no_risk",
+      "rating": "Underweight",
+      "target_weight_pct": 50,
+      "risk_turns": 0,
+      "input_sha256": "28228b1df111eac08377126f862053f6c8d83afa3bd28b960c198f1def1fe11a"
+    },
+    {
+      "trial": 1,
+      "ticker": "AMZN",
+      "condition": "full",
+      "rating": "Underweight",
+      "target_weight_pct": 50,
+      "risk_turns": 3,
+      "input_sha256": "d4562f940fd661d990ab73df66d57e36a90913a326ca68505934f5236332bb9a"
+    },
+    {
+      "trial": 1,
+      "ticker": "AMZN",
+      "condition": "no_risk",
+      "rating": "Underweight",
+      "target_weight_pct": 50,
+      "risk_turns": 0,
+      "input_sha256": "d4562f940fd661d990ab73df66d57e36a90913a326ca68505934f5236332bb9a"
+    },
+    {
+      "trial": 1,
+      "ticker": "GOOGL",
+      "condition": "full",
+      "rating": "Sell",
+      "target_weight_pct": 0,
+      "risk_turns": 3,
+      "input_sha256": "c5b15645c0d85a4ab06f381dc03774197bf3e41c71226a91e0382c92377348af"
+    },
+    {
+      "trial": 1,
+      "ticker": "GOOGL",
+      "condition": "no_risk",
+      "rating": "Underweight",
+      "target_weight_pct": 50,
+      "risk_turns": 0,
+      "input_sha256": "c5b15645c0d85a4ab06f381dc03774197bf3e41c71226a91e0382c92377348af"
+    },
+    {
+      "trial": 2,
+      "ticker": "AAPL",
+      "condition": "full",
+      "rating": "Sell",
+      "target_weight_pct": 0,
+      "risk_turns": 3,
+      "input_sha256": "28228b1df111eac08377126f862053f6c8d83afa3bd28b960c198f1def1fe11a"
+    },
+    {
+      "trial": 2,
+      "ticker": "AAPL",
+      "condition": "no_risk",
+      "rating": "Underweight",
+      "target_weight_pct": 50,
+      "risk_turns": 0,
+      "input_sha256": "28228b1df111eac08377126f862053f6c8d83afa3bd28b960c198f1def1fe11a"
+    },
+    {
+      "trial": 2,
+      "ticker": "AMZN",
+      "condition": "full",
+      "rating": "Underweight",
+      "target_weight_pct": 50,
+      "risk_turns": 3,
+      "input_sha256": "d4562f940fd661d990ab73df66d57e36a90913a326ca68505934f5236332bb9a"
+    },
+    {
+      "trial": 2,
+      "ticker": "AMZN",
+      "condition": "no_risk",
+      "rating": "Underweight",
+      "target_weight_pct": 50,
+      "risk_turns": 0,
+      "input_sha256": "d4562f940fd661d990ab73df66d57e36a90913a326ca68505934f5236332bb9a"
+    },
+    {
+      "trial": 2,
+      "ticker": "GOOGL",
+      "condition": "full",
+      "rating": "Sell",
+      "target_weight_pct": 0,
+      "risk_turns": 3,
+      "input_sha256": "c5b15645c0d85a4ab06f381dc03774197bf3e41c71226a91e0382c92377348af"
+    },
+    {
+      "trial": 2,
+      "ticker": "GOOGL",
+      "condition": "no_risk",
+      "rating": "Underweight",
+      "target_weight_pct": 50,
+      "risk_turns": 0,
+      "input_sha256": "c5b15645c0d85a4ab06f381dc03774197bf3e41c71226a91e0382c92377348af"
+    },
+    {
+      "trial": 3,
+      "ticker": "AAPL",
+      "condition": "full",
+      "rating": "Sell",
+      "target_weight_pct": 0,
+      "risk_turns": 3,
+      "input_sha256": "28228b1df111eac08377126f862053f6c8d83afa3bd28b960c198f1def1fe11a"
+    },
+    {
+      "trial": 3,
+      "ticker": "AAPL",
+      "condition": "no_risk",
+      "rating": "Underweight",
+      "target_weight_pct": 50,
+      "risk_turns": 0,
+      "input_sha256": "28228b1df111eac08377126f862053f6c8d83afa3bd28b960c198f1def1fe11a"
+    },
+    {
+      "trial": 3,
+      "ticker": "AMZN",
+      "condition": "full",
+      "rating": "Underweight",
+      "target_weight_pct": 50,
+      "risk_turns": 3,
+      "input_sha256": "d4562f940fd661d990ab73df66d57e36a90913a326ca68505934f5236332bb9a"
+    },
+    {
+      "trial": 3,
+      "ticker": "AMZN",
+      "condition": "no_risk",
+      "rating": "Underweight",
+      "target_weight_pct": 50,
+      "risk_turns": 0,
+      "input_sha256": "d4562f940fd661d990ab73df66d57e36a90913a326ca68505934f5236332bb9a"
+    },
+    {
+      "trial": 3,
+      "ticker": "GOOGL",
+      "condition": "full",
+      "rating": "Underweight",
+      "target_weight_pct": 50,
+      "risk_turns": 3,
+      "input_sha256": "c5b15645c0d85a4ab06f381dc03774197bf3e41c71226a91e0382c92377348af"
+    },
+    {
+      "trial": 3,
+      "ticker": "GOOGL",
+      "condition": "no_risk",
+      "rating": "Underweight",
+      "target_weight_pct": 50,
+      "risk_turns": 0,
+      "input_sha256": "c5b15645c0d85a4ab06f381dc03774197bf3e41c71226a91e0382c92377348af"
+    }
+  ]
+}

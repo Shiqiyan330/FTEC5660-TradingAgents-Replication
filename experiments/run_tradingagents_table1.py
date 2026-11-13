@@ -251,7 +251,10 @@ def load_sessions(data_dir: Path) -> list[str]:
 
 def _entry_rows(entries: list[dict]) -> pd.DataFrame:
     columns = ["date", "ticker", "rating", "decision", "pending", "raw_return", "alpha", "holding", "resolved"]
-    return pd.DataFrame([{key: entry.get(key) for key in columns} for entry in entries], columns=columns)
+    return pd.DataFrame([
+        {**{key: entry.get(key) for key in columns}, "raw_return": entry.get("raw")}
+        for entry in entries
+    ], columns=columns)
 
 
 def run(
@@ -262,6 +265,15 @@ def run(
     parallel_tickers: bool = False,
     risk_management_enabled: bool = True,
 ) -> dict:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    run_store = output_dir / "run_files"
+    yfinance_cache_dir = run_store / "yfinance_cache"
+    yfinance_cache_dir.mkdir(parents=True, exist_ok=True)
+
+    # Keep yfinance's SQLite cookie cache inside the run directory for restricted user profiles.
+    import yfinance as yf
+    yf.set_tz_cache_location(str(yfinance_cache_dir))
+
     from tradingagents.backtest import run_backtest
     from tradingagents.default_config import DEFAULT_CONFIG
     from tradingagents.memory import TradingMemoryLog
@@ -269,8 +281,6 @@ def run(
     dates = load_sessions(data_dir)
     selected_dates = dates[-1:] if pilot else dates
     expected = {(ticker, date) for ticker in TICKERS for date in selected_dates}
-    output_dir.mkdir(parents=True, exist_ok=True)
-    run_store = output_dir / "run_files"
     config = DEFAULT_CONFIG.copy()
     config["results_dir"] = str(run_store / "results")
     config["data_cache_dir"] = str(run_store / "cache")

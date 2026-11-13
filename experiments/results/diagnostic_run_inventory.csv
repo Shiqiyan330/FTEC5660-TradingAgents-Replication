@@ -1,0 +1,10 @@
+folder,saved_state_count,actual_risk_flags,stored_decisions,latest_settlement_failures,note
+risk_full_pilot,3,True,3,0,diagnostic only; not pooled with the controlled replay
+risk_ablation_pilot,3,False,3,0,diagnostic only; not pooled with the controlled replay
+risk_full_rep2,0,,0,0,"connection failure before any decision; preserved, not counted as a completed trial"
+risk_full_rep2_noproxy,3,True,3,0,diagnostic only; not pooled with the controlled replay
+risk_ablation_rep2_noproxy,3,False,3,0,diagnostic only; not pooled with the controlled replay
+risk_full_rep3_noproxy,3,True,3,0,diagnostic only; not pooled with the controlled replay
+risk_ablation_rep3_noproxy,3,False,3,0,diagnostic only; not pooled with the controlled replay
+risk_full_clean_rep1,3,True,3,0,diagnostic only; not pooled with the controlled replay
+risk_ablation_clean_rep1,1,True,status not written; interrupted,,interrupted supplemental CONTROL: ablation flag omitted; folder name is not condition evidence

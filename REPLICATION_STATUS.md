@@ -13,9 +13,9 @@ Paper: https://arxiv.org/html/2412.20138
 - Trading costs: commission 0 bps per order (commission-free); slippage 5 bps per order. No cost sensitivity test is run.
 - TradingAgents rating weights: Buy 100%, Overweight 75%, Hold retains the prior target, Underweight 50%, Sell 0%; REVIEW retains the prior target.
 - Baselines: MACD EMA(12,26,9), long when MACD exceeds its signal; KDJ(9,3,3) plus RSI(14), enter on K crossing above D with K<30 and RSI<50, exit on K crossing below D with K>80 or RSI>70; ZMR uses the 20-session close z-score, entering at z<=-2 and exiting at z>=0; SMA is long when SMA(20)>SMA(50); Buy-and-Hold targets 100% from the first session open.
-- Metrics: CR is final equity over initial capital minus one. AR uses the paper's geometric formula over the 88 calendar days between the stated start and end dates. Sharpe uses daily excess return over the prior available DGS3MO observation and annualizes by `sqrt(252)`. MDD is the positive peak-to-trough percentage.
+- Metrics: CR is final equity over initial capital minus one. AR uses the paper's geometric formula over the 88 calendar days between the stated start and end dates. Sharpe is mean daily excess return over the prior available DGS3MO observation divided by the sample standard deviation of daily portfolio returns, annualized by `sqrt(252)`. MDD is the positive peak-to-trough percentage.
 
-The detailed command, rule definitions, and generated output schema are in [experiments/README.md](experiments/README.md). The run configuration and CSV outputs are under the local `smoke_test/table1_results_final/` directory.
+The detailed commands and rule definitions are in [experiments/README.md](experiments/README.md). Included input snapshots are in `experiments/data/table1`; recalculated metrics, equity curves and scoring configuration are in `experiments/results/table1_baselines`.
 
 ## Baseline results
 
@@ -39,11 +39,18 @@ Returns and drawdown are percentages. Paper values are Table 1 CR; local AR, Sha
 | AMZN | ZMR | 0.00 | 0.00 | N/A | 0.00 | 0 | -0.77 |
 | AMZN | SMA | 20.84 | 119.37 | 2.89 | 4.22 | 1 | 11.01 |
 
-## Remaining work
+## Agent reproduction and fixed-model risk ablation
 
-- Planned fixed-model ablation: disable the three-agent Risk Management Team while retaining the analyst team, researcher debate, Trader, memory, data, dates, and scoring. The ablated path sends the Trader proposal directly to the Portfolio Manager, with a prompt that explicitly states no risk debate occurred. The original paper argues that risk-management debate supports drawdown control but reports no component-level ablation; this experiment measures that claim in the reproduction setup. The runner exposes `--ablate-risk-management`; run the full and ablated conditions in separate output directories and with identical model/provider settings before reporting an effect.
-- Ablation results are pending. A full run makes many hosted-model calls and must not be represented by the existing single-day smoke test or the baseline-only results below.
-- The paper does not disclose the technical-indicator parameters, execution price, position sizing, commission, or slippage used for Table 1. The parameters above make each local result reproducible.
-- The paper's setup names AAPL, NVDA, MSFT, META, and Google, while Table 1 reports AAPL, GOOGL, and AMZN.
-- Applying the paper's stated annualized-return formula to its AAPL Buy-and-Hold CR (-5.23%) over the 88-day evaluation window gives about -19.82%, while Table 1 reports -5.09%. The table's CR/AR values therefore do not follow that formula over the stated window. The paper also does not define Sharpe annualization.
-- The existing smoke analysis is AAPL on 2024-03-28, rated Underweight, using GPT-6 Luna for both model tiers. The expanded three-ticker pilot for 2024-03-28 was attempted with matching settings, but all three cells failed with a model `Connection error`; zero new decisions were stored. A read-only `/models` connectivity check returned `ProxyError`. The resumable runner and rating-to-portfolio scorer are in `experiments/`; the 183-cell full run and TradingAgents Table 1 rows remain pending a working model connection.
+The graph runs locally in Conda `fin-agent-sakura`. Both quick and deep model identifiers are `gpt-6-luna` through the configured OpenAI-compatible gateway. This differs from the paper's backbone and does not establish exact historical Table 1 agent performance.
+
+End-to-end diagnostics exposed a dead inherited proxy and a non-writable yfinance SQLite cache. The experiment runner now stores yfinance's cookie/time-zone databases in its own writable output folder. Process-local removal of the dead proxy restored inference. Native pending-entry settlement succeeded without resampling existing decisions. Historical news/social sources still have missing data and occasional SEC/FRED SSL failures; see the report and diagnostic inventory.
+
+The controlled modification disables only the three-perspective risk discussion, retaining the Portfolio Manager and its explicit no-debate prompt. The experiment freezes the same analysts/research/Trader state for both conditions. It reuses the project's original risk and manager factories and router. All 18 cells (3 tickers x 2 conditions x 3 stochastic trials) completed and passed shared-input hashes, model and risk-turn invariants.
+
+Across trial means, full target weights are 16.67%, 16.67%, 33.33%; no-risk weights are 50%, 50%, 50%. No-risk minus full averages +27.78 percentage points (sample variance 92.59 pp squared; SD 9.62 pp). Five of nine paired decisions differ. These are behavioral metrics under the local rating mapping, not portfolio returns or drawdown results. The 61-session agent portfolio and the paper's exact performance remain unmeasured.
+
+Artifacts: [manifest and common inputs](experiments/results/risk_replay), [offline summarizer](experiments/summarize_risk_replay.py), [report](reports/reproducibility_report.pdf), [submission audit](reports/submission_audit.md).
+
+## Submission blockers
+
+The report and experiment artifacts are prepared for the private replication repository. The student confirmed repository ownership and authorized the code, frozen inputs, ablation results and report for branch `qiyan/luna-sentiment-adapter`; publication is being completed. The instructor needs repository access, and the student must provide the <=15-minute recorded presentation link. See [the human checklist](reports/HUMAN_IN_LOOP.md).

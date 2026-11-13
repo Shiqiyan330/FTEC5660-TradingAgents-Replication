@@ -1,0 +1,29 @@
+{
+  "sources": {
+    "prices": "Yahoo Finance daily OHLCV and Adj Close",
+    "risk_free": "FRED DGS3MO"
+  },
+  "provenance": "Copies of the cached files used for the reported baseline calculation. Original download timestamp was not independently reconstructed.",
+  "files": [
+    {
+      "file": "AAPL.csv",
+      "sha256": "3433a0960450ed233114ec51dab59f774382482c828663b3ef6f616c672cf7cc",
+      "bytes": 37305
+    },
+    {
+      "file": "GOOGL.csv",
+      "sha256": "296e634f01fe9df951c99754cfed76fed2cb58c3237a138f1664d59692c6d0a3",
+      "bytes": 37102
+    },
+    {
+      "file": "AMZN.csv",
+      "sha256": "8f250faad945a819cc3b94ff8ad3c0f6ba9e7de0e4ec3c1ba9fdb45443021fc3",
+      "bytes": 36800
+    },
+    {
+      "file": "DGS3MO.csv",
+      "sha256": "82dfc9600314ee99c0cf93b063bee31d4ab753604fa9c5af4e25b35d64f1f832",
+      "bytes": 5481
+    }
+  ]
+}
