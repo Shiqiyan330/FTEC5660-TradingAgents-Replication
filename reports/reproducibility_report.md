@@ -9,6 +9,8 @@
 **Branch:** `qiyan/luna-sentiment-adapter`
 **Scope:** Q1 2024 technical baselines plus a three-trial, frozen-input risk-team ablation dated 2024-03-28.
 
+**Experiment status:** The news-inclusive DeepSeek source phase and all 18 paired replay cells are complete. Both tiers use `deepseek-flash`; the provider is `deepseek`, and company/global news comes from the frozen Benzinga snapshot. The 61-session quarterly run is a separate local continuation and is not included in the one-date ablation statistics below.
+
 ## 1. Project and reproduction target
 
 TradingAgents combines specialist market, sentiment, news and fundamentals analysts; bull/bear researchers; a Research Manager; a Trader; aggressive, conservative and neutral risk analysts; and a Portfolio Manager. It is an agentic system because agents call tools, exchange intermediate reports, debate and produce a final trading decision over multiple steps. The source paper reports return and drawdown comparisons with technical strategies. [1]
@@ -17,7 +19,9 @@ This work has two measured targets. First, it reconstructs the five technical co
 
 ## 2. Setup and model control
 
-Agent runs used local Windows Conda `fin-agent-sakura`, Python 3.11.15, TradingAgents 0.7.1, yfinance 1.3.0, LangGraph 1.2.0, langgraph-checkpoint-sqlite 3.1.3, langchain-openai 1.2.1 and OpenAI SDK 2.36.0. Both model tiers used the configured identifier `gpt-6-luna` through an OpenAI-compatible gateway at `https://sub.deuo.top/v1`. Both experimental conditions use the same gateway and model identifiers. The provider's underlying model identity is not independently established. Temperature, top-p, output cap and seed were not explicitly supplied; provider defaults and stochastic sampling apply. The machine-readable manifest records versions, endpoint host and settings without credentials.
+The completed news-inclusive experiment used local Windows Conda `fin-agent-sakura`, Python 3.11.15, TradingAgents 0.7.1, yfinance 1.3.0, LangGraph 1.2.0, langgraph-checkpoint-sqlite 3.1.3, langchain-openai 1.2.1 and OpenAI SDK 2.36.0. Both model tiers used `deepseek-flash` through the official DeepSeek-compatible endpoint `https://api.deepseek.com`, with `deepseek` as the provider. Company and global news used the frozen Benzinga snapshot in `experiments/data/news_20240328`. The runner recorded five SDK retries and an 8,192-token output cap; temperature, top-p and seed were not explicitly supplied. The machine-readable run records store versions, endpoint host and settings without credentials.
+
+The full and no-risk conditions use this same DeepSeek configuration. The controlled variable is the risk-team debate, not the model or provider. The source phase generated complete post-Trader states for AAPL, GOOGL and AMZN, and the replay completed 3 tickers x 2 conditions x 3 trials = 18 cells. The paper's gpt-4o-mini/gpt-4o and o1-preview configuration is therefore not reproduced exactly; this report evaluates the current open-source implementation under the fixed DeepSeek setup.
 
 The paper describes gpt-4o-mini/gpt-4o for quick tasks and o1-preview for deeper reasoning. [1] Our available model therefore differs from the paper, while remaining fixed between control and ablation. The results evaluate the current open-source implementation under this configuration. The local source starts from upstream commit `9fa1196`, with earlier screening adaptation and reproduction commits. Removing risk review is the one experimental modification; network/cache/export fixes support execution and measurement in both conditions.
 
@@ -71,37 +75,41 @@ Three independent provider-sampled repetitions cover 3 tickers x 2 conditions x 
 
 The statistical unit is one trial's mean over the same three tickers. Sample variance uses denominator n-1 across three trial means. This quantifies model-output variation conditional on one date's frozen evidence; it does not make nine independent market-date observations or estimate uncertainty across regimes.
 
+The current DeepSeek news rerun keeps this design and replaces the upstream state with reports generated using the Benzinga snapshot. It uses the same `deepseek-flash` configuration for the full and no-risk conditions. The source phase produced complete post-Trader states for all three tickers; those states were frozen before replay, and the replay used no live data tools.
+
 ## 7. Measured ablation results
 
-All 18 cells completed. Every paired input hash and model configuration matched, full runs recorded exactly three risk turns, and no-risk runs recorded zero. The ratings were:
+The DeepSeek news-inclusive replay completed all 18 cells. Every paired input hash and model configuration matched, full runs recorded exactly three risk turns, and no-risk runs recorded zero. The ratings were:
 
 | Ticker | Full trial 1 | Full trial 2 | Full trial 3 | No risk (all trials) |
 |---|---|---|---|---|
-| AAPL | Sell | Sell | Sell | Underweight |
-| GOOGL | Sell | Sell | Underweight | Underweight |
-| AMZN | Underweight | Underweight | Underweight | Underweight |
+| AAPL | Underweight | Underweight | Underweight | Underweight |
+| GOOGL | Overweight | Overweight | Overweight | Overweight |
+| AMZN | Overweight | Overweight | Overweight | Overweight |
 
 | Trial | Full mean target % | No-risk mean target % | No-risk minus full (pp) | Changed ratings / 3 |
 |---|---:|---:|---:|---:|
-| 1 | 16.67 | 50.00 | +33.33 | 2 |
-| 2 | 16.67 | 50.00 | +33.33 | 2 |
-| 3 | 33.33 | 50.00 | +16.67 | 1 |
+| 1 | 66.67 | 66.67 | 0.00 | 0 |
+| 2 | 66.67 | 66.67 | 0.00 | 0 |
+| 3 | 66.67 | 66.67 | 0.00 | 0 |
 
 | Across three trial means | Full | No risk | Paired difference |
 |---|---:|---:|---:|
-| Mean target / difference (%, pp) | 22.22 | 50.00 | +27.78 |
-| Sample variance (pp squared) | 92.59 | 0.00 | 92.59 |
-| Sample standard deviation (pp) | 9.62 | 0.00 | 9.62 |
+| Mean target / difference (%, pp) | 66.67 | 66.67 | 0.00 |
+| Sample variance (pp squared) | 0.00 | 0.00 | 0.00 |
+| Sample standard deviation (pp) | 0.00 | 0.00 | 0.00 |
 
-Five of nine ticker-trial pairs (55.6%) had different ratings. Removing risk review increased the average target weight by 27.78 percentage points. In this fixed-input slice, the risk team generally pushed the manager toward Sell for AAPL and GOOGL; AMZN was unchanged. Zero observed variance for the no-risk group is a result from three trials, not a guarantee of deterministic behavior.
+No ticker-trial pair (0/9) changed rating, and the paired target-weight difference was 0.00 percentage points. In this fixed-input DeepSeek slice, enabling the risk debate did not change the final rating or target weight. The zero observed variance across three repeated trials describes this run and does not guarantee deterministic behavior in future runs.
 
 The experiment measures downstream behavior. Its one date and fixed upstream text do not estimate CR, AR, Sharpe or MDD for the agent strategy. Native five-session settlement was restored separately, but its raw asset return and benchmark alpha are independent of the model's rating; they are not trading-strategy P&L and are not used as an ablation performance claim. The full 61-session TradingAgents portfolio remains unmeasured.
+
+The completed DeepSeek news run provides the ratings above for all three tickers and both conditions across three trials. The 61-session quarterly reproduction remains a separate run and should be summarized only after its local output and settlement checks complete.
 
 ## 8. Debug diary and reproducibility limits
 
 The inherited HTTP_PROXY/HTTPS_PROXY/ALL_PROXY variables, in both cases, pointed to `127.0.0.1:9` with no listener. Direct endpoint probes worked after ignoring those variables. The experiment subprocesses removed only those proxy variables; no global network setting, model, vendor or VPN was changed. OpenAI-compatible inference then completed normally.
 
-A second failure, `sqlite3.OperationalError: unable to open database file`, came from yfinance's default cookie/time-zone cache. The runner now calls its supported cache-location API with a writable per-run `run_files/yfinance_cache` directory. A native five-session price/alpha fetch then succeeded, and resuming the previous runs settled their pending entries while skipping saved decisions. Yahoo prices and configured FRED calls returned HTTP 200 in direct probes, but historical Yahoo news still raised YFDataException, social requests returned 403/429, and SEC/FRED sometimes raised SSL EOF or timeouts. Fixed snapshots prevent this availability drift between the two controlled conditions, while preserving the source reports' missing-data limitations.
+A second failure, `sqlite3.OperationalError: unable to open database file`, came from yfinance's default cookie/time-zone cache. The runner now calls its supported cache-location API with a writable per-run `run_files/yfinance_cache` directory. A native five-session price/alpha fetch then succeeded, and resuming the previous runs settled their pending entries while skipping saved decisions. The legacy run had historical Yahoo news failures, social requests returned 403/429, and SEC/FRED sometimes raised SSL EOF or timeouts. The current rerun uses a frozen Benzinga snapshot for company and global news; the snapshot covers 2024-03-21 through 2024-03-28 with 20 AAPL articles, 20 GOOGL articles, 18 AMZN articles and 10 global articles. The News Analyst may request a wider lookback than this snapshot, so those requests are recorded as unavailable rather than silently counted as Benzinga evidence. Social and optional macro-data availability remain separate limitations.
 
 One supplementary run was accidentally started without the ablation flag. Its recorded settings identified it as a control; it was stopped, retained and excluded from ablation statistics. A CSV export also read `raw_return` while the memory parser supplied `raw`, leaving an empty field despite successful settlement. That export now uses the parser's actual key. The Sharpe formula was retained and explicitly documented; regression tests cover varying risk-free rates and a flat portfolio. No Sharpe implementation change is claimed.
 
@@ -109,9 +117,9 @@ Validation comprised 13 focused unittest cases (replay isolation/routing/summary
 
 ## 9. Conclusion and submission status
 
-The technical baseline subset runs from included inputs and yields documented metrics, with clear differences from the paper. The component experiment successfully isolates the risk stage on common upstream evidence: removing it changed 5/9 decisions and increased mean target exposure by 27.78 pp across three stochastic trials (sample SD 9.62 pp). It supports the narrower finding that risk review changed decision selectivity in this slice; it does not establish profitability or drawdown improvement.
+The technical baseline subset runs from included inputs and yields documented metrics, with clear differences from the paper. The completed DeepSeek news component experiment isolates the risk stage on common upstream evidence: removing it changed 0/9 decisions and changed mean target exposure by 0.00 pp across three stochastic trials (sample SD 0.00 pp). The 61-session quarterly DeepSeek reproduction is a separate pending run and is not inferred from this one-date result.
 
-The assignment's report, measured modification, repeated-trial statistics, install/run instructions and inspectable artifacts are published in commit `8e6a2ad` on the private branch `qiyan/luna-sentiment-adapter`. The grader still needs repository access. The student's <=15-minute recorded Zoom presentation and link remain outstanding; a speaking guide is provided separately. These student actions are listed in `reports/HUMAN_IN_LOOP.md`.
+The report and DeepSeek/news repeated-trial statistics are recorded on the private branch `qiyan/luna-sentiment-adapter`. The grader still needs repository access. The student's <=15-minute recorded Zoom presentation and link remain outstanding; a speaking guide is provided separately. These student actions are listed in `reports/HUMAN_IN_LOOP.md`.
 
 ## References
 
