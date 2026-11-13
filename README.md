@@ -6,7 +6,7 @@
 
 ## FTEC5660 reproduction and ablation
 
-This branch contains a coursework reproduction of Table 1 technical baselines and a fixed-model risk-team ablation. Start with [the report](reports/reproducibility_report.pdf), [experiment instructions](experiments/README.md), [result artifacts](experiments/results/risk_replay), and [submission items requiring the student](reports/HUMAN_IN_LOOP.md). Both model tiers use `gpt-6-luna`; frozen analyst/research/Trader inputs isolate the downstream risk-team comparison. The report distinguishes the measured subset from the paper's full-period performance claim.
+This branch contains a coursework reproduction of Table 1 technical baselines and a fixed-model risk-team ablation. Start with [the report](reports/reproducibility_report.pdf), [upstream code-change audit](reports/upstream_change_audit.md), [experiment instructions](experiments/README.md), [result artifacts](experiments/results/risk_replay), and [submission items requiring the student](reports/HUMAN_IN_LOOP.md). Both model tiers use `gpt-6-luna`; frozen analyst/research/Trader inputs isolate the downstream risk-team comparison. The report distinguishes the measured subset from the paper's full-period performance claim.
 
 Use the installation steps below, then the commands in `experiments/README.md`. The baseline scorer additionally needs `vectorbt`; the saved input snapshots and completed replay results can be inspected without API access. API calls require your own locally configured key. The presentation recording link is supplied separately at submission.
 

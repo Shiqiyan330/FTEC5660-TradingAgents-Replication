@@ -227,3 +227,4 @@ reports/*
 !reports/reproducibility_report.pdf
 !reports/presentation_guide.md
 !reports/submission_audit.md
+!reports/upstream_change_audit.md

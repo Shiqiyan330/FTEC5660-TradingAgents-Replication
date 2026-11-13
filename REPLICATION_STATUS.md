@@ -49,7 +49,7 @@ The controlled modification disables only the three-perspective risk discussion,
 
 Across trial means, full target weights are 16.67%, 16.67%, 33.33%; no-risk weights are 50%, 50%, 50%. No-risk minus full averages +27.78 percentage points (sample variance 92.59 pp squared; SD 9.62 pp). Five of nine paired decisions differ. These are behavioral metrics under the local rating mapping, not portfolio returns or drawdown results. The 61-session agent portfolio and the paper's exact performance remain unmeasured.
 
-Artifacts: [manifest and common inputs](experiments/results/risk_replay), [offline summarizer](experiments/summarize_risk_replay.py), [report](reports/reproducibility_report.pdf), [submission audit](reports/submission_audit.md).
+Artifacts: [manifest and common inputs](experiments/results/risk_replay), [offline summarizer](experiments/summarize_risk_replay.py), [report](reports/reproducibility_report.pdf), [upstream code-change audit](reports/upstream_change_audit.md), [submission audit](reports/submission_audit.md).
 
 ## Submission blockers
 
