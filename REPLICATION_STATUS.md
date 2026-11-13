@@ -53,4 +53,4 @@ Artifacts: [manifest and common inputs](experiments/results/risk_replay), [offli
 
 ## Submission blockers
 
-The report and experiment artifacts are prepared for the private replication repository. The student confirmed repository ownership and authorized the code, frozen inputs, ablation results and report for branch `qiyan/luna-sentiment-adapter`; publication is being completed. The instructor needs repository access, and the student must provide the <=15-minute recorded presentation link. See [the human checklist](reports/HUMAN_IN_LOOP.md).
+The report and experiment artifacts are published in commit `8e6a2ad` to the private replication branch `qiyan/luna-sentiment-adapter`. The instructor needs repository access, and the student must provide the <=15-minute recorded presentation link. See [the human checklist](reports/HUMAN_IN_LOOP.md).

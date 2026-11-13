@@ -8,9 +8,11 @@
 
 3. **Add your student ID if the course submission needs it.** Do not invent an ID or upload the report under another student's identity.
 
-## Publishing authorization
+## Published payload
 
-The student confirmed ownership of `Shiqiyan330/FTEC5660-TradingAgents-Replication` and explicitly authorized publishing the code, tests, three model-generated frozen input snapshots, ablation outputs, baseline artifacts and report to branch `qiyan/luna-sentiment-adapter`. Configured secret values are excluded. The initial automatic review rejected the nonpublic payload before this explicit confirmation; publication is now proceeding under the student's authorization.
+Commit `8e6a2ad` is pushed to `Shiqiyan330/FTEC5660-TradingAgents-Replication`, branch `qiyan/luna-sentiment-adapter`. It contains the reproduction code and tests, three model-generated frozen input snapshots, all paired ablation outputs, baseline data and metrics, diagnostics, README instructions, report and submission audit. API credentials and local cookie/cache databases are excluded.
+
+The student confirmed ownership of the repository and explicitly authorized this payload before publication.
 
 ## Resolved without further action
 

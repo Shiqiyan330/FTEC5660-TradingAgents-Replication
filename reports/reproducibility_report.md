@@ -111,7 +111,7 @@ Validation comprised 13 focused unittest cases (replay isolation/routing/summary
 
 The technical baseline subset runs from included inputs and yields documented metrics, with clear differences from the paper. The component experiment successfully isolates the risk stage on common upstream evidence: removing it changed 5/9 decisions and increased mean target exposure by 27.78 pp across three stochastic trials (sample SD 9.62 pp). It supports the narrower finding that risk review changed decision selectivity in this slice; it does not establish profitability or drawdown improvement.
 
-The assignment's report, measured modification, repeated-trial statistics, install/run instructions and inspectable artifacts are prepared. The student confirmed ownership of the private replication repository and explicitly authorized publication of the code, frozen inputs, ablation outputs and report to the coursework branch; publication is being completed. The grader still needs repository access. The student's <=15-minute recorded Zoom presentation and link remain outstanding; a speaking guide is provided separately. These student actions are listed in `reports/HUMAN_IN_LOOP.md`.
+The assignment's report, measured modification, repeated-trial statistics, install/run instructions and inspectable artifacts are published in commit `8e6a2ad` on the private branch `qiyan/luna-sentiment-adapter`. The grader still needs repository access. The student's <=15-minute recorded Zoom presentation and link remain outstanding; a speaking guide is provided separately. These student actions are listed in `reports/HUMAN_IN_LOOP.md`.
 
 ## References
 

@@ -15,9 +15,9 @@ Checked against `C:/Users/QiyanShi/Downloads/Reproducibility.pdf`, pages 1-3, on
 | Debug diary, conclusions and limits | Report sections 8-9, diagnostic inventory; proxy, cache, missing news and mistaken supplemental control recorded | Satisfied locally |
 | Brief report <=10 pages | reports/reproducibility_report.pdf, 5 A4 pages; extracted and visually reviewed | Satisfied locally |
 | README with install/run steps | Root README points to experiments/README; committed-snapshot paths and offline summary commands supplied | Satisfied locally; pending publication |
-| Reviewable changes in commits | Existing baseline/runner/ablation commits through 2f303f3; new replay/report payload is staged in explicit files | In progress; user authorized publication, push verification pending |
+| Reviewable changes in commits | Existing baseline/runner/ablation commits through 2f303f3; coursework payload commit 8e6a2ad is pushed to the target branch | Satisfied |
 | No secrets/API keys committed | Local .env untracked; candidate files checked against configured secret values; SQLite cookie caches excluded from candidate payload | Checked for selected payload; recheck before commit |
-| GitHub submission link accessible | Private Shiqiyan330/FTEC5660-TradingAgents-Replication; authenticated read returned ADMIN; user confirmed ownership and authorized this payload | Push verification and grader access pending |
+| GitHub submission link accessible | Private Shiqiyan330/FTEC5660-TradingAgents-Replication; commit 8e6a2ad is pushed to qiyan/luna-sentiment-adapter | Pending confirmation that the grader has access |
 | <=15-minute recorded Zoom presentation and link | reports/presentation_guide.md provides a 10-12 minute script/demo plan | Not complete: student recording/link required |
 
 ## Verification performed
@@ -30,4 +30,4 @@ Checked against `C:/Users/QiyanShi/Downloads/Reproducibility.pdf`, pages 1-3, on
 
 ## Outstanding human actions
 
-See HUMAN_IN_LOOP.md for the private-repository grader access, student recording/link and student ID if required. The complete homework package remains open until these are resolved. A speaking guide does not substitute for a presentation recording.
+See HUMAN_IN_LOOP.md for private-repository grader access, the student recording/link and student ID if required. A speaking guide does not substitute for a presentation recording.
