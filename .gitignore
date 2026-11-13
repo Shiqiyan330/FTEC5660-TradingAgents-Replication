@@ -224,6 +224,7 @@ reports/*
 !reports/HUMAN_IN_LOOP.md
 !reports/build_report_pdf.py
 !reports/reproducibility_report.md
+!reports/reproducibility_report_zh.md
 !reports/reproducibility_report.pdf
 !reports/presentation_guide.md
 !reports/submission_audit.md
