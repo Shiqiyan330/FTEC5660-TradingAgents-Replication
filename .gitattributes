@@ -1,2 +1,3 @@
 *.pdf binary
 experiments/data/news_20240328/*.json text eol=lf
+experiments/data/table1/*.csv -text
