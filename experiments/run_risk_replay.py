@@ -62,7 +62,7 @@ def workflow(quick, deep, enabled, rounds=1):
     return graph.compile()
 
 
-def run(inputs, output, trials):
+def run(inputs, output, trials, workers=3):
     config = deepcopy(DEFAULT_CONFIG)
     settings = {
         **{f"{tier}_think_llm": config[f"{tier}_think_llm"] for tier in ("quick", "deep")},
@@ -123,7 +123,7 @@ def run(inputs, output, trials):
             cell(ticker, trial, enabled)
 
     for trial in range(1, trials + 1):
-        with ThreadPoolExecutor(max_workers=3) as executor:
+        with ThreadPoolExecutor(max_workers=workers) as executor:
             list(executor.map(lambda ticker: pair(ticker, trial), TICKERS))
 
 
@@ -132,10 +132,11 @@ def main():
     parser.add_argument("--inputs", type=Path, default=Path("experiments/results/risk_replay/inputs"))
     parser.add_argument("--output", type=Path, default=Path("experiments/results/risk_replay/cells"))
     parser.add_argument("--trials", type=int, default=3)
+    parser.add_argument('--workers', type=int, choices=(1, 2, 3), default=3)
     args = parser.parse_args()
     if args.trials < 3:
         parser.error("at least three stochastic trials are required")
-    run(args.inputs, args.output, args.trials)
+    run(args.inputs, args.output, args.trials, args.workers)
 
 
 if __name__ == "__main__":

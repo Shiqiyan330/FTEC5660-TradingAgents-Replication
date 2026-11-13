@@ -15,7 +15,7 @@ The user requested a news-inclusive rerun of all experiments in the current repo
 
 The first concurrent source attempt, `news_full_20240328`, was stopped after AAPL and GOOGL failed with the gateway's concurrency-limit error. No completed source states from that attempt are counted. Reddit 403/429 and intermittent FRED SSL errors remain separate availability limitations; adding financial news does not restore historical social posts.
 
-The replacement source run serializes tickers and graph nodes and increases only the SDK retry budget. Models, prompts, dates and news snapshot remain fixed. Automatic execution approval repeatedly disconnected before launching this replacement process. It has not run, and no news-inclusive agent result is claimed yet. The existing PDF therefore still reports the earlier news-unavailable experiment, not a completed news-inclusive rerun.
+The replacement source run serializes tickers and graph nodes and increases only the SDK retry budget. Models, prompts, dates and news snapshot remain fixed. Automatic execution approval initially disconnected before launching this process; after the student selected continuation once approval recovered, `news_full_serial_20240328` started. Its access log confirms AAPL company/global snapshot consumption. Final source decisions and the paired rerun are still pending; no news-inclusive result is claimed yet. The existing PDF therefore still reports the earlier news-unavailable experiment, not a completed news-inclusive rerun.
 
 ## Resume the prepared run
 
@@ -28,7 +28,7 @@ foreach ($name in $proxyNames) { Remove-Item "Env:\$name" -ErrorAction SilentlyC
 $env:TRADINGAGENTS_LLM_MAX_RETRIES = '8'
 python -m experiments.run_tradingagents_table1 --pilot --data-dir experiments/data/table1 --run-id news_full_serial_20240328 --output-dir smoke_test/news_full_serial_20240328 --news-vendor benzinga --news-snapshot-dir experiments/data/news_20240328 --graph-max-concurrency 1
 python -m experiments.freeze_risk_replay_inputs
-python -m experiments.run_risk_replay --inputs experiments/results/risk_replay_news/inputs --output experiments/results/risk_replay_news/cells --trials 3
+python -m experiments.run_risk_replay --inputs experiments/results/risk_replay_news/inputs --output experiments/results/risk_replay_news/cells --trials 3 --workers 1
 python -m experiments.summarize_risk_replay --root experiments/results/risk_replay_news
 ```
 
