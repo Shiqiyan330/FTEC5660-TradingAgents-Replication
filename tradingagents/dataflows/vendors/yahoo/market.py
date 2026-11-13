@@ -8,6 +8,7 @@ from dateutil.relativedelta import relativedelta
 from stockstats import wrap
 
 from tradingagents.dataflows.errors import NoMarketDataError, VendorError
+from tradingagents.dataflows.config import get_config
 from tradingagents.dataflows.symbols import normalize_symbol
 from tradingagents.dataflows.vendors.yahoo.common import price_text, raise_for_empty, yf_retry
 from tradingagents.dataflows.vendors.yahoo.ohlcv import _assert_ohlcv_not_stale, load_ohlcv
@@ -26,6 +27,22 @@ def get_YFin_data_online(
 
     # Resolve broker/forex symbols to Yahoo's convention (XAUUSD+ -> GC=F).
     canonical = normalize_symbol(symbol)
+
+    if get_config().get("cache_only_non_fred"):
+        data = load_ohlcv(canonical, end_date, fill_gaps=False)
+        data = data[
+            (data["Date"] >= pd.Timestamp(start_date))
+            & (data["Date"] <= pd.Timestamp(end_date))
+        ]
+        if data.empty:
+            raise_for_empty(symbol, canonical, f"rows between {start_date} and {end_date}")
+        for col in ("Open", "High", "Low", "Close", "Adj Close"):
+            if col in data.columns:
+                data[col] = data[col].map(price_text, na_action="ignore")
+        label = canonical if canonical == symbol.upper() else f"{canonical} (from {symbol})"
+        header = f"# Stock data for {label} from {start_date} to {end_date}\n"
+        header += f"# Total records: {len(data)}\n\n"
+        return header + data.to_csv(index=False)
 
     # yfinance treats ``end`` as EXCLUSIVE, so it would drop the requested
     # end_date row (and the current day when end_date is today). Request one day

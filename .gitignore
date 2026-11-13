@@ -218,6 +218,12 @@ __marimo__/
 # Cache
 **/data_cache/
 
+# Local experiment runs and scratch outputs
+/smoke_test/
+/tmp/
+/output/
+/pytest-cache-files-*/
+
 # Enterprise env file (secrets) and generated run reports
 .env.enterprise
 reports/*

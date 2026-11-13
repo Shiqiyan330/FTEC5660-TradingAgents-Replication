@@ -46,6 +46,8 @@ The model runner writes resumable decision records and full per-cell state logs 
 
 Scoring produces the combined Table 1 metrics, daily equity curves, rating-to-weight records, executed orders, improvement row, and one offline HTML comparison chart per ticker. The daily decision mapping is Buy 100%, Overweight 75%, Hold retain, Underweight 50%, Sell 0%, and REVIEW retain. A missing model decision is reported and prevents final scoring.
 
+For the 61-session Benzinga run, see [the API probes and run protocol](benzinga_table1_run.md). This run caches and audits all 244 company/global news windows, uses a separate output directory and run ID, and selects the provider with `--news-vendor benzinga`. News retries use the run's configured provider.
+
 ## Risk-Team Ablation
 
 The modification keeps the configured LLMs fixed and removes the three-agent risk debate (aggressive, conservative, and neutral). In the ablated graph, the Trader's proposal goes directly to the Portfolio Manager, whose prompt explicitly says no risk debate occurred. The analyst team, research debate, memory, tools, dates, market data, execution, and scoring stay the same. Use distinct run IDs and output directories so checkpoints and decisions cannot mix:

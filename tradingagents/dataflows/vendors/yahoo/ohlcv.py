@@ -5,7 +5,7 @@ import pandas as pd
 import yfinance as yf
 
 from tradingagents.dataflows.config import get_config
-from tradingagents.dataflows.errors import NoMarketDataError
+from tradingagents.dataflows.errors import NoMarketDataError, VendorUnavailableError
 from tradingagents.dataflows.files import replace_file
 from tradingagents.dataflows.symbols import normalize_symbol, safe_ticker_component
 from tradingagents.dataflows.vendors.yahoo.common import raise_for_empty, yf_retry
@@ -207,6 +207,10 @@ def load_ohlcv(symbol: str, as_of_date: str, fill_gaps: bool = True) -> pd.DataF
             data = cached
 
     if data is None:
+        if config.get("cache_only_non_fred"):
+            raise VendorUnavailableError(
+                f"Yahoo Finance OHLCV cache missing or stale for {canonical}."
+            )
         # yf.download catches every error, a rate limit included, and returns
         # an empty frame. Ticker.history raises the rate limit, so it is retried.
         downloaded = yf_retry(lambda: yf.Ticker(canonical).history(

@@ -121,12 +121,16 @@ def _fetch_json(url: str) -> dict:
 
 
 def _cached_json(url: str, name: str) -> dict:
-    path = Path(get_config()["data_cache_dir"]) / "sec_edgar" / name
-    if path.exists() and time.time() - path.stat().st_mtime < _CACHE_TTL_SECONDS:
+    config = get_config()
+    path = Path(config["data_cache_dir"]) / "sec_edgar" / name
+    if path.exists() and (config.get("cache_only_non_fred") or
+                          time.time() - path.stat().st_mtime < _CACHE_TTL_SECONDS):
         try:
             return json.loads(path.read_text(encoding="utf-8"))
         except ValueError:
             pass  # a truncated file is a miss, not a failure
+    if config.get("cache_only_non_fred"):
+        raise VendorUnavailableError(f"SEC EDGAR cache missing or unreadable: {name}")
     data = _fetch_json(url)
     path.parent.mkdir(parents=True, exist_ok=True)
     replace_file(path, lambda temp: Path(temp).write_text(json.dumps(data), encoding="utf-8"))

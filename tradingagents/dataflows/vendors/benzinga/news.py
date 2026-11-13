@@ -23,14 +23,16 @@ _ACCESS_LOCK = Lock()
 
 
 def _fetch_daily_news(ticker: str, news_date: str, limit: int, *, paginate: bool = False) -> tuple[dict, ...]:
+    config = get_config()
+    suffix = "_all" if paginate else ""
+    cache = Path(config["data_cache_dir"]) / "benzinga" / f"{ticker or 'GLOBAL'}_{news_date}_{limit}{suffix}.json"
+    if cache.exists():
+        return tuple(json.loads(cache.read_text(encoding="utf-8")))
+    if config.get("cache_only_non_fred"):
+        raise VendorUnavailableError(f"Benzinga cache missing for {ticker or 'GLOBAL'} on {news_date}.")
     api_key = os.getenv("BENZINGA_API_KEY")
     if not api_key:
         raise VendorNotConfiguredError("BENZINGA_API_KEY environment variable is not set.")
-
-    suffix = "_all" if paginate else ""
-    cache = Path(get_config()["data_cache_dir"]) / "benzinga" / f"{ticker or 'GLOBAL'}_{news_date}_{limit}{suffix}.json"
-    if cache.exists():
-        return tuple(json.loads(cache.read_text(encoding="utf-8")))
 
     params = {
         "date": news_date, "pageSize": str(limit), "token": api_key,

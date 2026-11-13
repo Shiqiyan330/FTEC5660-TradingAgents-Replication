@@ -266,6 +266,9 @@ def run(
     news_snapshot_dir: Path | None = None,
     ticker_workers: int | None = None,
     graph_max_concurrency: int | None = None,
+    selected_analysts=ANALYSTS,
+    cache_only_non_fred: bool = False,
+    cache_dir: Path | None = None,
 ) -> dict:
     output_dir.mkdir(parents=True, exist_ok=True)
     run_store = output_dir / "run_files"
@@ -285,9 +288,10 @@ def run(
     expected = {(ticker, date) for ticker in TICKERS for date in selected_dates}
     config = DEFAULT_CONFIG.copy()
     config["results_dir"] = str(run_store / "results")
-    config["data_cache_dir"] = str(run_store / "cache")
+    config["data_cache_dir"] = str((cache_dir or (run_store / "cache")).resolve())
     config["memory_log_path"] = str(run_store / "memory" / "unused.md")
     config["risk_management_enabled"] = risk_management_enabled
+    config["cache_only_non_fred"] = cache_only_non_fred
     if graph_max_concurrency is not None:
         config['graph_max_concurrency'] = graph_max_concurrency
     if news_snapshot_dir is not None:
@@ -307,13 +311,13 @@ def run(
     if parallel_tickers:
         result = _run_parallel_backtest(
             list(TICKERS), selected_dates, config,
-            selected_analysts=ANALYSTS, run_id=run_id, progress=progress,
+            selected_analysts=selected_analysts, run_id=run_id, progress=progress,
             ticker_workers=ticker_workers,
         )
     else:
         result = run_backtest(
             list(TICKERS), selected_dates, config,
-            selected_analysts=ANALYSTS, run_id=run_id, progress=progress,
+            selected_analysts=selected_analysts, run_id=run_id, progress=progress,
         )
     entries = TradingMemoryLog({"memory_log_path": str(result.log_path)}).load_entries()
     stored = {(entry["ticker"], entry["date"]) for entry in entries}
@@ -342,6 +346,9 @@ def run(
         "phase": "pilot" if pilot else "full",
         "news_provider": news_vendor,
         "news_snapshot_dir": str(news_snapshot_dir) if news_snapshot_dir else None,
+        "selected_analysts": list(selected_analysts),
+        "cache_only_non_fred": cache_only_non_fred,
+        "data_cache_dir": config["data_cache_dir"],
         'graph_max_concurrency': config.get('graph_max_concurrency'),
         "expected_cells": len(expected),
         "stored_cells_in_phase": len(expected & stored),
@@ -378,16 +385,25 @@ def main() -> None:
     parser.add_argument("--news-vendor", choices=("yfinance", "benzinga", "alpha_vantage"), default="yfinance")
     parser.add_argument("--news-snapshot-dir", type=Path)
     parser.add_argument('--graph-max-concurrency', type=int, choices=(1, 2, 3, 4))
+    parser.add_argument('--skip-social', action='store_true', help='Skip StockTwits and Reddit sentiment fetching')
+    parser.add_argument('--cache-only-non-fred', action='store_true',
+                        help='Read existing non-FRED caches only; FRED remains online')
+    parser.add_argument('--cache-dir', type=Path,
+                        help='Shared cache directory for non-FRED data')
     parser.add_argument(
         "--ablate-risk-management", action="store_true",
         help="Ablate the risk debate team and pass the Trader proposal to the Portfolio Manager",
     )
     args = parser.parse_args()
     output_dir = args.output_dir if args.output_dir.is_absolute() else root / args.output_dir
+    cache_dir = args.cache_dir if not args.cache_dir or args.cache_dir.is_absolute() else root / args.cache_dir
+    selected_analysts = tuple(analyst for analyst in ANALYSTS
+                              if not (args.skip_social and analyst == 'social'))
     status = run(
         args.data_dir, output_dir, args.run_id, args.pilot,
         args.parallel_tickers, not args.ablate_risk_management, args.news_vendor, args.news_snapshot_dir,
-        args.ticker_workers, args.graph_max_concurrency,
+        args.ticker_workers, args.graph_max_concurrency, selected_analysts,
+        args.cache_only_non_fred, cache_dir,
     )
     if status["missing_cells"]:
         raise SystemExit(2)

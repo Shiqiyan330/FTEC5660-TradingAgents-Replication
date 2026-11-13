@@ -1,0 +1,228 @@
+{
+  "trials": 3,
+  "tickers": [
+    "AAPL",
+    "GOOGL",
+    "AMZN"
+  ],
+  "cells": 18,
+  "input_date": "2024-03-28",
+  "settings": {
+    "quick_think_llm": "deepseek-flash",
+    "deep_think_llm": "deepseek-flash",
+    "quick_think_provider": "deepseek",
+    "deep_think_provider": "deepseek",
+    "llm_kwargs": {
+      "max_retries": 5,
+      "max_tokens": 8192
+    },
+    "max_risk_discuss_rounds": 1,
+    "output_language": "English"
+  },
+  "initial_weight_pct": 0,
+  "trial_means": [
+    {
+      "trial": 1,
+      "full": 66.66666666666667,
+      "no_risk": 66.66666666666667,
+      "delta_pp": 0.0,
+      "changed_ratings": 0
+    },
+    {
+      "trial": 2,
+      "full": 66.66666666666667,
+      "no_risk": 66.66666666666667,
+      "delta_pp": 0.0,
+      "changed_ratings": 0
+    },
+    {
+      "trial": 3,
+      "full": 66.66666666666667,
+      "no_risk": 66.66666666666667,
+      "delta_pp": 0.0,
+      "changed_ratings": 0
+    }
+  ],
+  "statistics": {
+    "full": {
+      "mean": 66.66666666666667,
+      "sample_variance_pp2": 0.0,
+      "sample_sd_pp": 0.0
+    },
+    "no_risk": {
+      "mean": 66.66666666666667,
+      "sample_variance_pp2": 0.0,
+      "sample_sd_pp": 0.0
+    },
+    "delta_pp": {
+      "mean": 0.0,
+      "sample_variance_pp2": 0.0,
+      "sample_sd_pp": 0.0
+    }
+  },
+  "interpretation": "variability across trial means; not 9 independent market dates",
+  "rating_rows": [
+    {
+      "trial": 1,
+      "ticker": "AAPL",
+      "condition": "full",
+      "rating": "Underweight",
+      "target_weight_pct": 50,
+      "risk_turns": 3,
+      "input_sha256": "4cc0df0963ea7a206079abe2c58bc3845caa39576b5c0cf46f725c403651127f"
+    },
+    {
+      "trial": 1,
+      "ticker": "AAPL",
+      "condition": "no_risk",
+      "rating": "Underweight",
+      "target_weight_pct": 50,
+      "risk_turns": 0,
+      "input_sha256": "4cc0df0963ea7a206079abe2c58bc3845caa39576b5c0cf46f725c403651127f"
+    },
+    {
+      "trial": 1,
+      "ticker": "AMZN",
+      "condition": "full",
+      "rating": "Overweight",
+      "target_weight_pct": 75,
+      "risk_turns": 3,
+      "input_sha256": "1b3ddf81a66a112c37fe9a18d3419bd8b68ef43d53a745403c4817bc2d580b87"
+    },
+    {
+      "trial": 1,
+      "ticker": "AMZN",
+      "condition": "no_risk",
+      "rating": "Overweight",
+      "target_weight_pct": 75,
+      "risk_turns": 0,
+      "input_sha256": "1b3ddf81a66a112c37fe9a18d3419bd8b68ef43d53a745403c4817bc2d580b87"
+    },
+    {
+      "trial": 1,
+      "ticker": "GOOGL",
+      "condition": "full",
+      "rating": "Overweight",
+      "target_weight_pct": 75,
+      "risk_turns": 3,
+      "input_sha256": "241a9e1ccc6af04beb1aa3b44b2219ce28acef9aae2cea852279cde1a87fca9b"
+    },
+    {
+      "trial": 1,
+      "ticker": "GOOGL",
+      "condition": "no_risk",
+      "rating": "Overweight",
+      "target_weight_pct": 75,
+      "risk_turns": 0,
+      "input_sha256": "241a9e1ccc6af04beb1aa3b44b2219ce28acef9aae2cea852279cde1a87fca9b"
+    },
+    {
+      "trial": 2,
+      "ticker": "AAPL",
+      "condition": "full",
+      "rating": "Underweight",
+      "target_weight_pct": 50,
+      "risk_turns": 3,
+      "input_sha256": "4cc0df0963ea7a206079abe2c58bc3845caa39576b5c0cf46f725c403651127f"
+    },
+    {
+      "trial": 2,
+      "ticker": "AAPL",
+      "condition": "no_risk",
+      "rating": "Underweight",
+      "target_weight_pct": 50,
+      "risk_turns": 0,
+      "input_sha256": "4cc0df0963ea7a206079abe2c58bc3845caa39576b5c0cf46f725c403651127f"
+    },
+    {
+      "trial": 2,
+      "ticker": "AMZN",
+      "condition": "full",
+      "rating": "Overweight",
+      "target_weight_pct": 75,
+      "risk_turns": 3,
+      "input_sha256": "1b3ddf81a66a112c37fe9a18d3419bd8b68ef43d53a745403c4817bc2d580b87"
+    },
+    {
+      "trial": 2,
+      "ticker": "AMZN",
+      "condition": "no_risk",
+      "rating": "Overweight",
+      "target_weight_pct": 75,
+      "risk_turns": 0,
+      "input_sha256": "1b3ddf81a66a112c37fe9a18d3419bd8b68ef43d53a745403c4817bc2d580b87"
+    },
+    {
+      "trial": 2,
+      "ticker": "GOOGL",
+      "condition": "full",
+      "rating": "Overweight",
+      "target_weight_pct": 75,
+      "risk_turns": 3,
+      "input_sha256": "241a9e1ccc6af04beb1aa3b44b2219ce28acef9aae2cea852279cde1a87fca9b"
+    },
+    {
+      "trial": 2,
+      "ticker": "GOOGL",
+      "condition": "no_risk",
+      "rating": "Overweight",
+      "target_weight_pct": 75,
+      "risk_turns": 0,
+      "input_sha256": "241a9e1ccc6af04beb1aa3b44b2219ce28acef9aae2cea852279cde1a87fca9b"
+    },
+    {
+      "trial": 3,
+      "ticker": "AAPL",
+      "condition": "full",
+      "rating": "Underweight",
+      "target_weight_pct": 50,
+      "risk_turns": 3,
+      "input_sha256": "4cc0df0963ea7a206079abe2c58bc3845caa39576b5c0cf46f725c403651127f"
+    },
+    {
+      "trial": 3,
+      "ticker": "AAPL",
+      "condition": "no_risk",
+      "rating": "Underweight",
+      "target_weight_pct": 50,
+      "risk_turns": 0,
+      "input_sha256": "4cc0df0963ea7a206079abe2c58bc3845caa39576b5c0cf46f725c403651127f"
+    },
+    {
+      "trial": 3,
+      "ticker": "AMZN",
+      "condition": "full",
+      "rating": "Overweight",
+      "target_weight_pct": 75,
+      "risk_turns": 3,
+      "input_sha256": "1b3ddf81a66a112c37fe9a18d3419bd8b68ef43d53a745403c4817bc2d580b87"
+    },
+    {
+      "trial": 3,
+      "ticker": "AMZN",
+      "condition": "no_risk",
+      "rating": "Overweight",
+      "target_weight_pct": 75,
+      "risk_turns": 0,
+      "input_sha256": "1b3ddf81a66a112c37fe9a18d3419bd8b68ef43d53a745403c4817bc2d580b87"
+    },
+    {
+      "trial": 3,
+      "ticker": "GOOGL",
+      "condition": "full",
+      "rating": "Overweight",
+      "target_weight_pct": 75,
+      "risk_turns": 3,
+      "input_sha256": "241a9e1ccc6af04beb1aa3b44b2219ce28acef9aae2cea852279cde1a87fca9b"
+    },
+    {
+      "trial": 3,
+      "ticker": "GOOGL",
+      "condition": "no_risk",
+      "rating": "Overweight",
+      "target_weight_pct": 75,
+      "risk_turns": 0,
+      "input_sha256": "241a9e1ccc6af04beb1aa3b44b2219ce28acef9aae2cea852279cde1a87fca9b"
+    }
+  ]
+}
