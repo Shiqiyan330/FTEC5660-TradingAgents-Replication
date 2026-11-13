@@ -2,7 +2,7 @@
 
 ## Comparison base
 
-This audit compares the coursework branch at `2d87018` with the checked-out upstream base `9fa1196fffbcfd9de5146d2dd2869df84ab99838`. The base is the local `origin/main` commit used when the reproduction branch was created. The comparison contains 65 tracked paths: 4,602 text-line additions, 400 deletions, and one binary PDF. The two commits that record the published results are `8e6a2ad` and `2d87018`.
+This audit compares the coursework source snapshot at `2d87018` with the checked-out upstream base `9fa1196fffbcfd9de5146d2dd2869df84ab99838`. The snapshot is the published experiment/report payload before adding this audit document. The base is the local `origin/main` commit used when the reproduction branch was created. The comparison contains 65 tracked paths: 4,602 text-line additions, 400 deletions, and one binary PDF. Commits `8e6a2ad`, `2d87018`, and `8c6da23` publish the experiment/report payload, its status update, and this upstream-change audit respectively.
 
 The differences group into runtime adaptations, reproduction and ablation tooling, tests, data/results, and coursework documentation. They do not represent 65 changes to the upstream trading framework.
 

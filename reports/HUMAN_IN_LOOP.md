@@ -10,7 +10,7 @@
 
 ## Published payload
 
-Commit `8e6a2ad` is pushed to `Shiqiyan330/FTEC5660-TradingAgents-Replication`, branch `qiyan/luna-sentiment-adapter`. It contains the reproduction code and tests, three model-generated frozen input snapshots, all paired ablation outputs, baseline data and metrics, diagnostics, README instructions, report and submission audit. API credentials and local cookie/cache databases are excluded.
+Commits `8e6a2ad`, `2d87018`, and `8c6da23` are pushed to `Shiqiyan330/FTEC5660-TradingAgents-Replication`, branch `qiyan/luna-sentiment-adapter`. They contain the reproduction code and tests, three model-generated frozen input snapshots, all paired ablation outputs, baseline data and metrics, diagnostics, README instructions, report, submission audit, and upstream-change audit. Direct `git ls-remote` verification confirmed the branch head is `8c6da23`. API credentials and local cookie/cache databases are excluded.
 
 The student confirmed ownership of the repository and explicitly authorized this payload before publication.
 
